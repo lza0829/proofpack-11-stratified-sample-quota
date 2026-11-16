@@ -1,10 +1,77 @@
-[
-  {"business_key": "CH-A01", "title": "旗舰渠道结算", "amount": 52000.00, "qty": 1200, "event_ts": "2026-03-02T09:00:00Z", "revision": 1},
-  {"business_key": "CH-A02", "title": "社区渠道结算", "amount": 18600.50, "qty": 640, "event_ts": "2026-03-02T09:10:00Z", "revision": 1},
-  {"business_key": "CH-A03", "title": "商超渠道结算", "amount": 33400.00, "qty": 890, "event_ts": "2026-03-02T09:20:00Z", "revision": 2},
-  {"business_key": "CH-B01", "title": "团购渠道结算", "amount": 27880.25, "qty": 710, "event_ts": "2026-03-02T09:30:00Z", "revision": 1},
-  {"business_key": "CH-B02", "title": "外卖渠道结算", "amount": 41250.00, "qty": 1550, "event_ts": "2026-03-02T09:40:00Z", "revision": 1},
-  {"business_key": "CH-B03", "title": "企业渠道结算", "amount": 9500.00, "qty": 120, "event_ts": "2026-03-02T09:50:00Z", "revision": 1},
-  {"business_key": "CH-C01", "title": "直播渠道结算", "amount": 67120.80, "qty": 2100, "event_ts": "2026-03-02T10:00:00Z", "revision": 3},
-  {"business_key": "CH-C02", "title": "加盟渠道结算", "amount": 22340.00, "qty": 530, "event_ts": "2026-03-02T10:10:00Z", "revision": 1}
-]
+{
+  "strata_field": "channel_group",
+  "rows": [
+    {
+      "business_key": "CH-A01",
+      "title": "旗舰渠道结算",
+      "amount": 52000.0,
+      "qty": 1200,
+      "event_ts": "2026-03-02T09:00:00Z",
+      "revision": 1,
+      "channel_group": "A"
+    },
+    {
+      "business_key": "CH-A02",
+      "title": "社区渠道结算",
+      "amount": 18600.5,
+      "qty": 640,
+      "event_ts": "2026-03-02T09:10:00Z",
+      "revision": 1,
+      "channel_group": "A"
+    },
+    {
+      "business_key": "CH-A03",
+      "title": "商超渠道结算",
+      "amount": 33400.0,
+      "qty": 890,
+      "event_ts": "2026-03-02T09:20:00Z",
+      "revision": 2,
+      "channel_group": "A"
+    },
+    {
+      "business_key": "CH-B01",
+      "title": "团购渠道结算",
+      "amount": 27880.25,
+      "qty": 710,
+      "event_ts": "2026-03-02T09:30:00Z",
+      "revision": 1,
+      "channel_group": "B"
+    },
+    {
+      "business_key": "CH-B02",
+      "title": "外卖渠道结算",
+      "amount": 41250.0,
+      "qty": 1550,
+      "event_ts": "2026-03-02T09:40:00Z",
+      "revision": 1,
+      "channel_group": "B"
+    },
+    {
+      "business_key": "CH-B03",
+      "title": "企业渠道结算",
+      "amount": 9500.0,
+      "qty": 120,
+      "event_ts": "2026-03-02T09:50:00Z",
+      "revision": 1,
+      "channel_group": "B"
+    },
+    {
+      "business_key": "CH-C01",
+      "title": "直播渠道结算",
+      "amount": 67120.8,
+      "qty": 2100,
+      "event_ts": "2026-03-02T10:00:00Z",
+      "revision": 3,
+      "channel_group": "C"
+    },
+    {
+      "business_key": "CH-C02",
+      "title": "加盟渠道结算",
+      "amount": 22340.0,
+      "qty": 530,
+      "event_ts": "2026-03-02T10:10:00Z",
+      "revision": 1,
+      "channel_group": "C"
+    }
+  ]
+}

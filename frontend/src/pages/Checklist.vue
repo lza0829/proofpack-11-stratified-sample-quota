@@ -43,7 +43,7 @@ async function onPackChange() {
 <template>
   <div class="page">
     <h1>校验清单</h1>
-    <p class="muted">基础项：条数一致、键唯一、必填非空。结果与包内条目互证。</p>
+    <p class="muted">基础项：条数一致、键唯一、必填非空、分层配额互证。结果与包内条目互证。</p>
     <p v-if="err" class="tag danger">{{ err }}</p>
     <div class="panel">
       <h3>执行校验</h3>
@@ -52,7 +52,7 @@ async function onPackChange() {
           <label>证据包</label>
           <select v-model="packId" @change="onPackChange">
             <option v-for="p in packs" :key="p.id" :value="p.id">
-              {{ p.pack_no }}（{{ p.item_count }} 条 · {{ ({ built: '已生成', checked_ok: '校验通过', checked_fail: '校验未过', released: '已放行', rejected: '已驳回' })[p.status] || p.status }}）
+              {{ p.pack_no }}（{{ p.item_count }} 条 · {{ ({ built: '已生成', checked_ok: '校验通过', checked_fail: '校验未过', released: '已放行', rejected: '已驳回', voided: '已作废' })[p.status] || p.status }}）
             </option>
           </select>
         </div>

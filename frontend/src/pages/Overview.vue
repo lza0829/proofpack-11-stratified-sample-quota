@@ -17,7 +17,9 @@ onMounted(async () => {
         <div class="stat"><div class="stat-num">{{ stats.subject_count }}</div><div class="stat-label">举证对象</div></div>
         <div class="stat"><div class="stat-num">{{ stats.enabled_subjects }}</div><div class="stat-label">已启用</div></div>
         <div class="stat"><div class="stat-num">{{ stats.sample_batch_count }}</div><div class="stat-label">采样批次</div></div>
+        <div class="stat"><div class="stat-num">{{ stats.shortfall_batches }}</div><div class="stat-label">未满批次</div></div>
         <div class="stat"><div class="stat-num">{{ stats.pack_count }}</div><div class="stat-label">证据包</div></div>
+        <div class="stat"><div class="stat-num">{{ stats.voided_packs }}</div><div class="stat-label">已作废包</div></div>
         <div class="stat"><div class="stat-num">{{ stats.checklist_count }}</div><div class="stat-label">清单结果</div></div>
         <div class="stat"><div class="stat-num">{{ stats.passed_releases }}</div><div class="stat-label">已放行</div></div>
         <div class="stat"><div class="stat-num">{{ stats.rejected_releases }}</div><div class="stat-label">已驳回</div></div>

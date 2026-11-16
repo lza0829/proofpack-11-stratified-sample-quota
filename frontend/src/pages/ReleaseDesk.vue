@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { getJSON, postJSON } from '../api'
 
 const packs = ref([])
@@ -9,6 +9,19 @@ const reason = ref('')
 const last = ref(null)
 const err = ref('')
 const busy = ref(false)
+
+const STATUS = {
+  built: '已生成',
+  checked_ok: '校验通过',
+  checked_fail: '校验未过',
+  released: '已放行',
+  rejected: '已驳回',
+  voided: '已作废',
+}
+
+const selectedPack = computed(
+  () => packs.value.find((p) => p.id === Number(packId.value)) || null,
+)
 
 async function refresh() {
   packs.value = await getJSON('/api/packs')
@@ -22,6 +35,7 @@ onMounted(async () => {
 
 async function decide(decision) {
   err.value = ''
+  last.value = null
   busy.value = true
   try {
     last.value = await postJSON('/api/releases/decide', {
@@ -45,7 +59,7 @@ function decisionLabel(d) {
 <template>
   <div class="page">
     <h1>放行台</h1>
-    <p class="muted">仅清单全部通过才可放行；驳回须填写原因并留痕。</p>
+    <p class="muted">清单全过且层配额互证一致才可放行；尽力未满、旧配额、无分层明细的包一律硬拒绝。</p>
     <p v-if="err" class="tag danger">{{ err }}</p>
     <div class="panel">
       <h3>做出决策</h3>
@@ -54,7 +68,7 @@ function decisionLabel(d) {
           <label>证据包</label>
           <select v-model="packId">
             <option v-for="p in packs" :key="p.id" :value="p.id">
-              {{ p.pack_no }}（{{ ({ built: '已生成', checked_ok: '校验通过', checked_fail: '校验未过', released: '已放行', rejected: '已驳回' })[p.status] || p.status }}）
+              {{ p.pack_no }}（{{ STATUS[p.status] || p.status }}<template v-if="!p.releasable"> · 不可放行</template>）
             </option>
           </select>
         </div>
@@ -65,6 +79,9 @@ function decisionLabel(d) {
         <button :disabled="busy || !packId" @click="decide('pass')">放行通过</button>
         <button class="danger" :disabled="busy || !packId" @click="decide('reject')">驳回</button>
       </div>
+      <p v-if="selectedPack && !selectedPack.releasable" class="tag danger" style="margin-top:0.5rem">
+        {{ selectedPack.hold_reason || '该包不可放行' }}
+      </p>
       <p v-if="last">
         决策
         <span class="tag" :class="last.decision === 'pass' ? 'ok' : 'danger'">
@@ -94,7 +111,7 @@ function decisionLabel(d) {
               </span>
             </td>
             <td>{{ r.reason }}</td>
-            <td><span class="tag">{{ ({ built: '已生成', checked_ok: '校验通过', checked_fail: '校验未过', released: '已放行', rejected: '已驳回' })[r.pack_status] || r.pack_status }}</span></td>
+            <td><span class="tag">{{ STATUS[r.pack_status] || r.pack_status }}</span></td>
             <td class="mono">{{ r.created_at }}</td>
           </tr>
         </tbody>

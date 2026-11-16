@@ -122,8 +122,60 @@ def run_checklist(pack_id: int) -> dict[str, Any]:
             }
         )
 
+        # 4. 分层配额互证：层配额 ↔ 批次分层明细 ↔ 样本行 ↔ 包条目
+        strata = sample_repo.list_strata(conn, pack["batch_id"])
+        batch = sample_repo.get_batch(conn, pack["batch_id"])
+        problems: list[str] = []
+        if not strata:
+            problems.append("批次无分层明细，无法互证层配额")
+        else:
+            row_strata = [r.get("stratum") for r in sample_rows]
+            if any(s is None for s in row_strata):
+                problems.append("存在无分层标记的样本行")
+            for s in strata:
+                actual = sum(1 for x in row_strata if x == s["stratum"])
+                if actual != s["sample_count"]:
+                    problems.append(
+                        f"层「{s['stratum']}」明细样本{s['sample_count']}条≠样本行{actual}条"
+                    )
+                expect_met = 1 if s["sample_count"] >= s["target_count"] else 0
+                if int(s["quota_met"]) != expect_met:
+                    problems.append(f"层「{s['stratum']}」达额标记与目标/样本数不符")
+            if sum(s["sample_count"] for s in strata) != len(sample_rows):
+                problems.append("各层样本数合计与样本行总数不符")
+        if batch and batch.get("quota_version_id") != pack.get("quota_version_id"):
+            problems.append("包与批次引用的配额版本不一致")
+        strata_ok = not problems
+        if strata_ok:
+            detail_strata = "；".join(
+                f"层「{s['stratum']}」源{s['source_count']}/目标{s['target_count']}/样本{s['sample_count']}/"
+                + ("达额" if s["quota_met"] else "未满")
+                for s in strata
+            )
+        else:
+            detail_strata = "；".join(problems)
+        check_repo.insert_result(
+            conn,
+            pack_id=pack_id,
+            check_code="strata_quota",
+            check_title="分层配额互证",
+            passed=strata_ok,
+            detail=detail_strata,
+            created_at=now,
+        )
+        results.append(
+            {
+                "check_code": "strata_quota",
+                "check_title": "分层配额互证",
+                "passed": strata_ok,
+                "detail": detail_strata,
+            }
+        )
+
         all_ok = all(r["passed"] for r in results)
-        pack_repo.update_status(conn, pack_id, "checked_ok" if all_ok else "checked_fail")
+        # 清单结果留痕，但不改写终态（作废/已放行/已驳回），避免作废包被复活
+        if pack["status"] not in ("voided", "released", "rejected"):
+            pack_repo.update_status(conn, pack_id, "checked_ok" if all_ok else "checked_fail")
         conn.commit()
 
         return {
